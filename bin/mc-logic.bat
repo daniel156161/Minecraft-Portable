@@ -12,6 +12,7 @@ goto End
 :Java-erstellen
 if /i %processor_architecture%==64 goto Java-erstellen-64Bit
 if /i %processor_architecture%==AMD64 goto Java-erstellen-64Bit
+:Java-64Bit-error
 del PCs\%computername%.bat
 echo set jar=%jar%>>PCs\%computername%.bat
 echo set Java=32>>PCs\%computername%.bat
@@ -47,7 +48,7 @@ echo set ram=%ram%>>PCs\%computername%.bat
 goto End
 
 :mc-config-pc-ordner
-echo set jar=Minecraft>>PCs\%computername%.bat
+echo set jar=%sjar%>>PCs\%computername%.bat
 if /i %processor_architecture%==64 goto mc-config-pc-ordner-64Bit
 if /i %processor_architecture%==AMD64 goto mc-config-pc-ordner-64Bit
 echo set Java=32>>PCs\%computername%.bat
@@ -71,12 +72,6 @@ exit
 REM Überbrüft Java
 :Java-ckeck
 if /i %processor_architecture%==x86 goto Java-64Bit-error
-goto End
-:Java-64Bit-error
-del PCs\%computername%.bat
-echo set jar=%jar%>>PCs\%computername%.bat
-echo set Java=32>>PCs\%computername%.bat
-echo set ram=%ram%>>PCs\%computername%.bat
 goto End
 
 :Update

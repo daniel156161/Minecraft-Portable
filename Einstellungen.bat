@@ -6,7 +6,7 @@ if not exist PCs\mc-config.bat goto Minecraft-Portable
 call PCs\mc-config.bat
 
 REM Version Prüfen
-set aktuelleversion=7.2
+set aktuelleversion=8.0
 
 if not %Version%==%aktuelleversion% goto Minecraft-Portable
 goto startprogram
@@ -25,32 +25,34 @@ echo.
 set /p launcher=Bitte Zahl eingeben: 
 if %launcher%==0 goto startprogram
 if %launcher%==1 goto minecraft
-if %launcher%==2 goto technic
-goto startprogram
-
-:technic
-del PCs\%computername%.bat
-echo set jar=TechnicLauncher>>PCs\%computername%.bat
-echo set Java=%Java%>>PCs\%computername%.bat
-echo set ram=%ram%>>PCs\%computername%.bat
+if %launcher%==2 goto minecraft
 goto startprogram
 
 :minecraft
 del PCs\%computername%.bat
+REM Switch to other launcher
+if %launcher%==2 goto technic
 echo set jar=Minecraft>>PCs\%computername%.bat
+:pc-config-launcher-switch-rest
 echo set Java=%Java%>>PCs\%computername%.bat
 echo set ram=%ram%>>PCs\%computername%.bat
 goto startprogram
 
+:technic
+echo set jar=TechnicLauncher>>PCs\%computername%.bat
+goto pc-config-launcher-switch-rest
+
 :menu32
-echo [1] = RAM einstellen
-echo [2] = Update Suchen
-echo [3] = Launcher
+echo [1] = Launcher
+echo [2] = RAM einstellen
+echo [3] = Standart Launcher
+echo [4] = Update Suchen
 echo.
 set /p ei=Bitte zahl eingeben: 
-if %ei%==1 goto RAM
-if %ei%==2 goto Update
-if %ei%==3 goto launcher
+if %ei%==1 goto launcher
+if %ei%==2 goto RAM
+if %ei%==3 goto Standart-Launcher
+if %ei%==4 goto Update
 echo Falsche Eingabe, der Befehl: %ei% gibt es nicht.
 echo Bitte nochmal Versuchen
 ping localhost -n 10>nul
@@ -126,18 +128,21 @@ goto RAM
 :startprogram
 CLS
 call PCs\%computername%.bat
-title %starter% Einstellungen [Version: %Version%] [RAM: %ram%B] [Java: %java% Bit] [PC: %computername%] [Launcher: %jar%]
-if /i %processor_architecture%==x86 goto menu32_beta
+call PCs\mc-config.bat
+title %starter% Einstellungen [Version: %Version%] [RAM: %ram%B] [Java: %java% Bit] [PC: %computername%] [Launcher: %jar%] [ St. Launcher: %sjar% ]
+if /i %processor_architecture%==x86 goto menu32
 echo [1] = Launcher
 echo [2] = Java Einstellen
 echo [3] = RAM einstellen
-echo [4] = Update Suchen
+echo [4] = Standart Launcher
+echo [5] = Update Suchen
 echo.
 set /p ei=Bitte zahl eingeben: 
 if %ei%==1 goto launcher
 if %ei%==2 goto Java
 if %ei%==3 goto RAM
-if %ei%==4 goto Update
+if %ei%==4 goto Standart-Launcher
+if %ei%==5 goto Update
 echo Falsche Eingabe, der Befehl: %ei% gibt es nicht.
 echo Bitte nochmal Versuchen
 ping localhost -n 10>nul
@@ -145,4 +150,32 @@ goto startprogram
 
 :Update
 start https://github.com/daniel156161/Minecraft-Portable
+goto startprogram
+
+:Standart-Launcher
+cls
+echo [0] Zuruch ins menu
+echo.
+echo [1] Minecraft Launcher
+echo [2] Technic Launcher
+echo.
+set /p launcher=Bitte Zahl eingeben: 
+if %launcher%==0 goto startprogram
+if %launcher%==1 goto Standart-Launcher-mc-config
+if %launcher%==2 goto Standart-Launcher-mc-config
+goto startprogram
+
+:Standart-Launcher-mc-config
+call PCs\mc-config.bat
+del PCs\mc-config.bat
+echo set Version=%aktuelleversion%>>PCs\mc-config.bat
+echo set starter=%starter%>>PCs\mc-config.bat
+REM sjar to other
+if %launcher%==2 goto technic-mc-config
+REM sjar to Minecraft
+echo set sjar=Minecraft>>PCs\mc-config.bat
+goto startprogram
+
+:technic-mc-config
+echo set sjar=TechnicLauncher>>PCs\mc-config.bat
 goto startprogram

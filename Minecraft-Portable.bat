@@ -2,7 +2,7 @@
 color a
 REM Ladet Config oder erstellt Config (aktuelle Versions Variable)
 
-set aktuelleversion=7.2
+set aktuelleversion=8.0
 
 :start
 if not exist PCs\mc-config.bat goto Config-erstellen
@@ -45,6 +45,8 @@ exit
 REM Configs
 :Config-erstellen
 mkdir PCs
+echo set sjar=Minecraft>>PCs\mc-config.bat
+:createconfig
 echo set Version=%aktuelleversion%>>PCs\mc-config.bat
 echo set starter=Minecraft-Portable>>PCs\mc-config.bat
 call PCs\mc-config.bat
@@ -54,12 +56,8 @@ goto start
 
 :Config-loeschen
 del PCs\mc-config.bat
-echo set Version=%aktuelleversion%>>PCs\mc-config.bat
-echo set starter=Minecraft-Portable>>PCs\mc-config.bat
-call PCs\mc-config.bat
-title %starter%
-color a
-goto start
+echo set sjar=%sjar%>>PCs\mc-config.bat
+goto createconfig
 
 :logic-error
 echo Logic datei konnte nicht gefunden werden
