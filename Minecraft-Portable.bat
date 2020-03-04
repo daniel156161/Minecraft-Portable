@@ -2,29 +2,44 @@
 color a
 REM Ladet Config oder erstellt Config (aktuelle Versions Variable)
 
-set aktuelleversion=6.0
+set aktuelleversion=7.2
 
 :start
 if not exist PCs\mc-config.bat goto Config-erstellen
 call PCs\mc-config.bat
 title %starter%
 
-if not exist Java\mc-logic.bat goto logic-error
+if not exist bin\mc-logic.bat goto logic-error
 REM Version Pr�fen
 if not %Version%==%aktuelleversion% goto Config-loeschen
 
 REM �berbr�fen
-call Java\mc-logic.bat load
-call Java\mc-logic.bat ram-check
+call bin\mc-logic.bat load
+call bin\mc-logic.bat ram-check
 
 REM Sucht den Pfad zum .minecraft-Verzeichnis
-SET AppData=%CD%
+SET AppData=%CD%\data
 
 REM �berpr�ft ob sich JavaPortable unter \Java installiert ist und nutzt dann dieses
-if exist %CD%\Java\%Java%\bin\javaw.exe SET PATH=%CD%\Java\%Java%\bin
+if %Java%==64 goto 64
+if %Java%==32 goto 32
 
+:64
+if exist %CD%\bin\Java64\bin\javaw.exe SET PATH=%CD%\bin\Java64\bin
+goto startminecraft
+
+:32
+if exist %CD%\bin\Java\bin\javaw.exe SET PATH=%CD%\bin\Java\bin
+goto startminecraft
+
+:startminecraft
 REM Startet Minecraft
-start javaw.exe -Xms128M -Xmx%ram% -jar Launcher\%jar%.jar
+if %jar%==Minecraft goto Minecraft
+start javaw.exe -Xms128M -Xmx%ram% -jar bin\%jar%.jar
+exit
+
+:Minecraft
+start "" "%CD%\bin\MinecraftLauncher.exe" --workDir "%CD%\data\.minecraft" --lockDir %CD%\data\.minecraft
 exit
 
 REM Configs
